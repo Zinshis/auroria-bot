@@ -2,7 +2,9 @@
 using Discord;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 using System;
 using System.Threading.Tasks;
 
@@ -10,22 +12,31 @@ namespace AuroriaBot
 {
     class Program
     {
-        public static ConfigurationOptions ConfigurationOptions { get; private set; }
+        private static IHost _host;
         private DiscordSocketClient _client;
 
-        public static void Main(string[] args) {
-            CreateHostBuilder(args).Build().RunAsync();
+        public static void Main(string[] args) 
+        {
+            ApplicationHostBuilder.ConfigureStartupLogger();
 
-            new Program().MainAsync().GetAwaiter().GetResult();
+            Log.Information("Configuring Host ...");
+            _host = ApplicationHostBuilder.CreateHostBuilder(args).Build();
+            _host.RunAsync(); // Run async so thread is not blocked
+            Log.Information("Host configured");
+
+            var serviceProvider = _host.Services.CreateScope().ServiceProvider;
+
+            Log.Information("Starting main routine ...");
+            new Program().MainAsync(serviceProvider).GetAwaiter().GetResult();
         }
 
-        public async Task MainAsync()
+        public async Task MainAsync(IServiceProvider serviceProvider)
         {
             _client = new DiscordSocketClient();
 
-            _client.Log += Log;
+            //_client.Log += Log;
 
-            var token = ConfigurationOptions.Token;
+            var token = serviceProvider.GetRequiredService<ConfigurationOptions>().Token;
 
             await _client.LoginAsync(TokenType.Bot, token);
             await _client.StartAsync();
@@ -33,29 +44,5 @@ namespace AuroriaBot
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
-
-        private Task Log(LogMessage msg)
-        {
-            Console.WriteLine(msg.ToString());
-            return Task.CompletedTask;
-        }
-
-        private static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((hostingContext, configuration) =>
-                {
-                    configuration.Sources.Clear();
-
-                    IHostEnvironment env = hostingContext.HostingEnvironment;
-
-                    configuration
-                        .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true);
-
-                    IConfigurationRoot configurationRoot = configuration.Build();
-
-                    ConfigurationOptions = new ConfigurationOptions();
-                    configurationRoot.Bind(ConfigurationOptions);
-                });
     }
 }
