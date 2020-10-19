@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using AuroriaBot.Discord;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
@@ -49,11 +50,14 @@ namespace AuroriaBot.Configuration
                 })
                 .UseSerilog((hostingContext, services, loggerConfiguration) =>
                 {
-                    loggerConfiguration.ReadFrom.Configuration(hostingContext.Configuration);
+                    loggerConfiguration
+                        .ReadFrom.Configuration(hostingContext.Configuration);
                 })
-                .ConfigureServices((_, services) => 
+                .ConfigureServices((hostingContext, services) => 
                 {
-                    services.AddSingleton(configurationOptions);
+                    services
+                        .AddSingleton(configurationOptions)
+                        .AddScoped<IDiscordBotClient, DiscordBotClient>();
                 });
         }
     }
