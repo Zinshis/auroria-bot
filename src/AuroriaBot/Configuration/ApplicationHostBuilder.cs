@@ -1,4 +1,7 @@
 ﻿using AuroriaBot.Discord;
+using AuroriaBot.Services.XIVAPI;
+using Discord.Commands;
+using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -57,7 +60,10 @@ namespace AuroriaBot.Configuration
                 {
                     services
                         .AddSingleton(configurationOptions)
-                        .AddScoped<IDiscordBotClient, DiscordBotClient>();
+                        .AddSingleton<DiscordSocketClient>()
+                        .AddSingleton<CommandService>()
+                        .AddSingleton<IBotCommandHandler, BotCommandHandler>()
+                        .AddSingleton<XIVAPIService>();
                 });
         }
     }

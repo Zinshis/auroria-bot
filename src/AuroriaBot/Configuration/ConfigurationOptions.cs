@@ -7,5 +7,6 @@ namespace AuroriaBot.Configuration
     public class ConfigurationOptions
     {
         public string Token { get; set; }
+        public string DefaultPrefix { get; set; }
     }
 }

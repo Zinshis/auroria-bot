@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AuroriaBot.Discord
 {
-    public enum DiscordBotClientState
+    public enum BotState
     {
         Created,
         Initialized
