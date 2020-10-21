@@ -25,7 +25,21 @@ jobs:
         with:
           dotnet-version: 3.1.301
 
+      # Stop the bot process
+      - name: Stop Bot
+        run: |
+          if ((get-process "AuroriaBot" -ea SilentlyContinue) -ne $Null) { 
+            Stop-Process -Name "AuroriaBot" -Force
+          }
+
+      # Removes existing files in deploy location
+      - name: Clear deploy location
+        run: rm "C:\Applications\AuroriaBot" -Recurse
+
       # Deploy the bot (restore & build are implicit)
       - name: Deploy
         run: dotnet publish .\src\AuroriaBot\ --output "C:\Applications\AuroriaBot" --configuration Release --framework netcoreapp3.1 --runtime win10-x64 --self-contained true -p:PublishTrimmed=true
 
+      # Start the bot process again
+      - name: Start Bot
+        run: Start-Process -FilePath "C:\Applications\AuroriaBot\AuroriaBot.exe" -WorkingDirectory "C:\Applications\AuroriaBot"
