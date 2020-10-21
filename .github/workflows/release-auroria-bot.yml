@@ -47,4 +47,4 @@ jobs:
 
       # Start the bot process again
       - name: Start Bot
-        run: Start-Process -FilePath "C:\Applications\AuroriaBot\AuroriaBot.exe" -WorkingDirectory "C:\Applications\AuroriaBot"
+        run: Start-Process -FilePath "C:\Applications\AuroriaBot\AuroriaBot.exe" -WorkingDirectory "C:\Applications\AuroriaBot" -WindowStyle hidden
