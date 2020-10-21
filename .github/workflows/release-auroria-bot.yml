@@ -34,7 +34,10 @@ jobs:
 
       # Removes existing files in deploy location
       - name: Clear deploy location
-        run: rm "C:\Applications\AuroriaBot" -Recurse
+        run: |
+          if (Test-Path "C:\Applications\AuroriaBot" -PathType Container) { 
+            rm "C:\Applications\AuroriaBot" -Recurse
+          }
 
       # Deploy the bot (restore & build are implicit)
       - name: Deploy
