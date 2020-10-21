@@ -36,12 +36,14 @@ jobs:
       - name: Clear deploy location
         run: |
           if (Test-Path "C:\Applications\AuroriaBot" -PathType Container) { 
-            rm "C:\Applications\AuroriaBot" -Recurse
+            rm "C:\Applications\AuroriaBot" -Recurse -Exclude "appsettings.json"
           }
 
       # Deploy the bot (restore & build are implicit)
       - name: Deploy
         run: dotnet publish .\src\AuroriaBot\ --output "C:\Applications\AuroriaBot" --configuration Release --framework netcoreapp3.1 --runtime win10-x64 --self-contained true -p:PublishTrimmed=true
+
+      # TODO => config file with secrets (?) stored in Github
 
       # Start the bot process again
       - name: Start Bot
