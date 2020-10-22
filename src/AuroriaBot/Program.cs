@@ -19,11 +19,8 @@ namespace AuroriaBot
 
             Log.Information("Configuring Host ...");
             _host = ApplicationHostBuilder.CreateHostBuilder(args).Build();
-            _host.RunAsync(); // Run async so thread is not blocked
             Log.Information("Host configured.");
-
-            Log.Information("Starting main routine ...");
-            new Program().MainAsync(_host.Services).GetAwaiter().GetResult();
+            _host.Run();
         }
 
         public async Task MainAsync(IServiceProvider serviceProvider)

@@ -59,12 +59,14 @@ namespace AuroriaBot.Configuration
                 .ConfigureServices((hostingContext, services) => 
                 {
                     services
+                        .AddHostedService<Worker>()
                         .AddSingleton(configurationOptions)
                         .AddSingleton<DiscordSocketClient>()
                         .AddSingleton<CommandService>()
                         .AddSingleton<IBotCommandHandler, BotCommandHandler>()
                         .AddSingleton<XIVAPIService>();
-                });
+                }).UseWindowsService();
+
         }
     }
 }
