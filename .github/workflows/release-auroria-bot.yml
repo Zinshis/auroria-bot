@@ -14,6 +14,10 @@ jobs:
     # The type of runner that the job will run on
     runs-on: self-hosted
 
+    env:
+      Bot_UserName: ${{ secrets.AURORIABOTSERVERUSER }}
+      Bot_UserPassword: ${{ secrets.AURORIABOTSERVERPASSWORD }}
+
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
@@ -29,14 +33,21 @@ jobs:
       # TODO => Does not work with NETWORK SERVICE account (access denied), works with admin
       - name: Stop Bot
         run: |
-          if ((get-process "AuroriaBot" -ea SilentlyContinue) -ne $Null) { 
-            Stop-Process -Name "AuroriaBot" -Force
+          $username = '$env:Bot_UserName'
+          $password = '$env:Bot_UserPassword'
+
+          $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
+
+          if ((Get-Process "AuroriaBot -Credential $credential -ea SilentlyContinue) -ne $Null) { 
+            Stop-Process -Name "AuroriaBot" -Credential $credential -Force
           }
 
       # Removes existing files in deploy location
       # TODO => Exclude filter does not work correctly
       - name: Clear deploy location
         run: |
+          $user
           if (Test-Path "C:\Applications\AuroriaBot" -PathType Container) { 
             rm "C:\Applications\AuroriaBot\*" -Recurse -Exclude "appsettings.json"
           }
@@ -50,4 +61,11 @@ jobs:
       # Start the bot process again
       # TODO => Does not work with NETWORK SERVICE account (access denied)
       - name: Start Bot
-        run: Start-Process -FilePath "C:\Applications\AuroriaBot\AuroriaBot.exe" -WorkingDirectory "C:\Applications\AuroriaBot" -WindowStyle hidden
+        run: |
+          $username = '$env:Bot_UserName'
+          $password = '$env:Bot_UserPassword'
+
+          $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
+          $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
+
+          Start-Process -Credential $credential -FilePath "C:\Applications\AuroriaBot\AuroriaBot.exe" -WorkingDirectory "C:\Applications\AuroriaBot" -WindowStyle hidden
