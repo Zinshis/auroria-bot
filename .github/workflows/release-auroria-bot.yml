@@ -26,6 +26,7 @@ jobs:
           dotnet-version: 3.1.301
 
       # Stop the bot process
+      # TODO => Does not work with NETWORK SERVICE account (access denied), works with admin
       - name: Stop Bot
         run: |
           if ((get-process "AuroriaBot" -ea SilentlyContinue) -ne $Null) { 
@@ -33,10 +34,11 @@ jobs:
           }
 
       # Removes existing files in deploy location
+      # TODO => Exclude filter does not work correctly
       - name: Clear deploy location
         run: |
           if (Test-Path "C:\Applications\AuroriaBot" -PathType Container) { 
-            rm "C:\Applications\AuroriaBot" -Recurse -Exclude "appsettings.json"
+            rm "C:\Applications\AuroriaBot\*" -Recurse -Exclude "appsettings.json"
           }
 
       # Deploy the bot (restore & build are implicit)
@@ -46,5 +48,6 @@ jobs:
       # TODO => config file with secrets (?) stored in Github
 
       # Start the bot process again
+      # TODO => Does not work with NETWORK SERVICE account (access denied)
       - name: Start Bot
         run: Start-Process -FilePath "C:\Applications\AuroriaBot\AuroriaBot.exe" -WorkingDirectory "C:\Applications\AuroriaBot" -WindowStyle hidden
