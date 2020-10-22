@@ -28,15 +28,15 @@ jobs:
       # Stop the bot process
       - name: Stop Bot Service
         run: |
-          $svc = Get-Service "Parsec"
+          $svc = Get-Service "AuroriaBot"
           if ($svc.Status -eq "Running") {
-              Stop-Service "Parsec"
+              Stop-Service "AuroriaBot"
           }
                     
           $busyStopping = true
           $counter = 0
           while ($busyStopping -and ($counter -lt 5)) {
-              $svc = Get-Service "Parsec"
+              $svc = Get-Service "AuroriaBot"
               $scounter = $scounter + 1
               if ($svc.Status -eq "Stopped") {
                   echo "Service stopped"
