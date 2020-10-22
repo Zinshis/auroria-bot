@@ -39,7 +39,7 @@ jobs:
           $securePassword = ConvertTo-SecureString $password -AsPlainText -Force
           $credential = New-Object System.Management.Automation.PSCredential $username, $securePassword
 
-          if ((Get-Process "AuroriaBot -Credential $credential -ea SilentlyContinue) -ne $Null) { 
+          if ((Get-Process "AuroriaBot" -Credential $credential -ea SilentlyContinue) -ne $Null) { 
             Stop-Process -Name "AuroriaBot" -Credential $credential -Force
           }
 
