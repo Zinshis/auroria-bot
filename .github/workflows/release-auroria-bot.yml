@@ -34,7 +34,7 @@ jobs:
 
           if ($svc.Status -eq "Running") {
               Stop-Service "AuroriaBot"
-              $service.WaitForStatus($desiredStatus, $timeout)
+              $svc.WaitForStatus($desiredStatus, $timeout)
           }
 
       # Removes existing files in deploy location
