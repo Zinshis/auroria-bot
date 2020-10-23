@@ -37,6 +37,8 @@ jobs:
               $svc.WaitForStatus($desiredStatus, $timeout)
           }
 
+          Start-Sleep -s 5
+
       # Removes existing files in deploy location
       # TODO => Exclude filter does not work correctly
       - name: Clear deploy location
