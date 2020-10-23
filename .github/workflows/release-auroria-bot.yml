@@ -29,23 +29,12 @@ jobs:
       - name: Stop Bot Service
         run: |
           $svc = Get-Service "AuroriaBot"
+          $desiredStatus = "Stopped"
+          $timeout = New-TimeSpan -Seconds 10
+
           if ($svc.Status -eq "Running") {
               Stop-Service "AuroriaBot"
-          }
-                    
-          $busyStopping = true
-          $counter = 0
-          while ($busyStopping -and ($counter -lt 5)) {
-              $svc = Get-Service "AuroriaBot"
-              $scounter = $scounter + 1
-              if ($svc.Status -eq "Stopped") {
-                  echo "Service stopped"
-                  $busyStopping = false
-              }
-              else {
-                  echo "Waiting for service to stop ..."
-                  Start-Sleep -s 1
-              }
+              $service.WaitForStatus($desiredStatus, $timeout)
           }
 
       # Removes existing files in deploy location
